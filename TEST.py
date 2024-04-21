@@ -562,6 +562,10 @@ def setting():
 #-------------------[ BAGIAN-WORDLIST ]------------#
  
 def passwrd():
+def crack(idf, pwv):
+    # Your crack function implementation here
+    pass
+
     os.system('clear')
     print(logo)
     print(" \033[1;37m[\u001b[36m•\033[1;37m] YOU STARTED CLONING AT : "+time.strftime("%H:%M")+" "+ tag)
