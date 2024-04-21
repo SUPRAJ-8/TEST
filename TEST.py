@@ -84,7 +84,7 @@ def uaku():
 
 print("\033[1;37m [\u001b[36m•\033[1;37m] CHECKING FOR UPDATES \033[1;37m")
 time.sleep(2)
-get_ua_list = requests.get(" . ").text.splitlines()
+get_ua_list = requests.get(" https://github.com/SUPRAJ-8/APPROVALXTOXIC/blob/main/APPROVAL.txt ").text.splitlines()
 ugen2=[]
 ugen=[]
 cokbrut=[]
