@@ -668,8 +668,7 @@ def passwrd():
 # 		except requests.exceptions.ConnectionError:
 # 			waktu(31)
 # 	loop+=1
- 
- def crackfree(idf,pwv):
+def crackfree(idf,pwv):
     global loop, ok, cp
     sys.stdout.write(f"\r {P}[AMUL-XD]{P} {P}{loop}{P}/{P}{len(id)}{P} OK{P}[{H}{ok}{P}] [{P}{'{:.0%}'.format(loop/float(len(id)))}{P}]  ")
     sys.stdout.flush()
@@ -706,7 +705,6 @@ def passwrd():
         except requests.exceptions.ConnectionError:
             waktu(31)
     loop+=1
-
 
 #------------------[ METHODE-MBASIC-2 ]-------------------#
  
