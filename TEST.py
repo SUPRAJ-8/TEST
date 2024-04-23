@@ -634,7 +634,6 @@ def setting():
 
 # Define the banner function
 def banner():
-    # Your implementation of the banner function
     pass  # Placeholder for the actual implementation
 
 # Define the passwrd function
