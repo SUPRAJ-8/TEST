@@ -718,7 +718,7 @@ def passwrd():
 	woi = input(' \x1b[38;5;196m>>\x1b[37m ENTER TO BACK')
 	restart()
 
-    def banner():
+def banner():
     # Your implementation of the banner function
     pass  # Placeholder for the actual implementation
 
