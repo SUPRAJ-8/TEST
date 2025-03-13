@@ -143,6 +143,7 @@ class Login:
     def generate_token_eaat(self, cookie):
         """Generate EAAT token."""
         try:
+            # Step 1: Initiate device login
             data = {
                 "access_token": "1348564698517390|007c0a9101b9e1c8ffab727666805038",
                 "scope": "",
@@ -158,55 +159,30 @@ class Login:
 
             code = response["code"]
             user_code = response["user_code"]
+            verification_uri = response["verification_uri"]
 
-            # Step 2: Submit user code
+            print(f" [{B}•{W}] Please visit: {verification_uri}")
+            print(f" [{B}•{W}] Enter this code: {user_code}")
+
+            # Step 2: Poll for authorization
             url = f"https://graph.facebook.com/v16.0/device/login_status?method=post&code={code}&access_token=1348564698517390|007c0a9101b9e1c8ffab727666805038"
-            response = self.session.get(
-                "https://mbasic.facebook.com/device", cookies={"cookie": cookie}
-            )
-            soup = bs(response.content, "html.parser")
-            form = soup.find("form", {"method": "post"})
+            while True:
+                print(f" [{B}•{W}] Waiting for authorization...")
+                response = self.session.get(url, cookies={"cookie": cookie}).json()
+                print(f"Token retrieval response: {response}")  # Debugging
 
-            if not form:
-                print(f" [{B}×{W}] Failed to find the form on the device login page.")
-                return None
-
-            data = {
-                "jazoest": re.search(r'name="jazoest" type="hidden" value="(.*?)"', str(form)).group(1),
-                "fb_dtsg": re.search(r'name="fb_dtsg" type="hidden" value="(.*?)"', str(soup)).group(1),
-                "qr": "0",
-                "user_code": user_code,
-            }
-            action_url = "https://mbasic.facebook.com" + form["action"]
-            response = self.session.post(action_url, data=data, cookies={"cookie": cookie})
-            print(f"User code submission response: {response.status_code}")  # Debugging
-
-            # Step 3: Confirm device login
-            soup = bs(response.content, "html.parser")
-            form = soup.find("form", {"method": "post"})
-
-            if not form:
-                print(f" [{B}×{W}] Failed to find the confirmation form.")
-                return None
-
-            data = {}
-            for input_tag in form.find_all("input", {"value": True}):
-                if input_tag.get("name") != "__CANCEL__":
-                    data[input_tag.get("name")] = input_tag.get("value")
-
-            action_url = "https://mbasic.facebook.com" + form["action"]
-            response = self.session.post(action_url, data=data, cookies={"cookie": cookie})
-            print(f"Confirmation response: {response.status_code}")  # Debugging
-
-            # Step 4: Retrieve access token
-            response = self.session.get(url, cookies={"cookie": cookie}).json()
-            print(f"Token retrieval response: {response}")  # Debugging
-
-            if "access_token" in response:
-                return response["access_token"]
-            else:
-                print(f" [{B}×{W}] Failed to retrieve access token.")
-                return None
+                if "access_token" in response:
+                    return response["access_token"]
+                elif "error" in response:
+                    if response["error"]["code"] == 31:  # Authorization pending
+                        time.sleep(5)  # Wait 5 seconds before polling again
+                        continue
+                    else:
+                        print(f" [{B}×{W}] Error: {response['error']['message']}")
+                        return None
+                else:
+                    print(f" [{B}×{W}] Unexpected response: {response}")
+                    return None
 
         except Exception as e:
             print(f" [{B}×{W}] Error during EAAT token generation: {e}")
