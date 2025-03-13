@@ -95,18 +95,23 @@ class Login:
             self.request_cookie()
 
     def save_tokens(self):
-        """Save tokens to files."""
-        try:
-            with open("login/cookie.json", "w") as f:
-                f.write(self.cookie)
-            with open("login/token_eaag.json", "w") as f:
-                f.write(self.token_eaag)
-            with open("login/token_eaab.json", "w") as f:
-                f.write(self.token_eaab)
-            with open("login/token_eaat.json", "w") as f:
-                f.write(self.token_eaat)
-        except Exception as e:
-            print(f" [{B}×{W}] Error saving tokens: {e}")
+    """Save tokens to files."""
+    try:
+        if not all([self.token_eaag, self.token_eaab, self.token_eaat]):
+            print(f" [{B}×{W}] One or more tokens are missing. Cannot save tokens.")
+            return
+
+        with open("login/cookie.json", "w") as f:
+            f.write(self.cookie)
+        with open("login/token_eaag.json", "w") as f:
+            f.write(self.token_eaag)
+        with open("login/token_eaab.json", "w") as f:
+            f.write(self.token_eaab)
+        with open("login/token_eaat.json", "w") as f:
+            f.write(self.token_eaat)
+        print(f" [{B}•{W}] Tokens saved successfully.")
+    except Exception as e:
+        print(f" [{B}×{W}] Error saving tokens: {e}")
 
     def generate_token_eaag(self, cookie):
         """Generate EAAG token."""
@@ -133,45 +138,78 @@ class Login:
             print(f" [{B}×{W}] Failed to generate EAAB token: {e}")
             return None
 
-    def generate_token_eaat(self, cookie):
-        """Generate EAAT token."""
-        try:
-            data = {
-                "access_token": "1348564698517390|007c0a9101b9e1c8ffab727666805038",
-                "scope": "",
-            }
-            response = self.session.post(
-                "https://graph.facebook.com/v16.0/device/login/", data=data
-            ).json()
-            code = response["code"]
-            user_code = response["user_code"]
-            url = f"https://graph.facebook.com/v16.0/device/login_status?method=post&code={code}&access_token=1348564698517390|007c0a9101b9e1c8ffab727666805038"
-            response = self.session.get(
-                "https://mbasic.facebook.com/device", cookies={"cookie": cookie}
-            )
-            soup = bs(response.content, "html.parser")
-            form = soup.find("form", {"method": "post"})
-            data = {
-                "jazoest": re.search(r'name="jazoest" type="hidden" value="(.*?)"', str(form)).group(1),
-                "fb_dtsg": re.search(r'name="fb_dtsg" type="hidden" value="(.*?)"', str(soup)).group(1),
-                "qr": "0",
-                "user_code": user_code,
-            }
-            action_url = "https://mbasic.facebook.com" + form["action"]
-            response = self.session.post(action_url, data=data, cookies={"cookie": cookie})
-            soup = bs(response.content, "html.parser")
-            form = soup.find("form", {"method": "post"})
-            data = {}
-            for input_tag in form.find_all("input", {"value": True}):
-                if input_tag.get("name") != "__CANCEL__":
-                    data[input_tag.get("name")] = input_tag.get("value")
-            action_url = "https://mbasic.facebook.com" + form["action"]
-            self.session.post(action_url, data=data, cookies={"cookie": cookie})
-            response = self.session.get(url, cookies={"cookie": cookie}).json()
-            return response["access_token"]
-        except Exception as e:
-            print(f" [{B}×{W}] Failed to generate EAAT token: {e}")
+  def generate_token_eaat(self, cookie):
+    """Generate EAAT token."""
+    try:
+        # Step 1: Initiate device login
+        data = {
+            "access_token": "1348564698517390|007c0a9101b9e1c8ffab727666805038",
+            "scope": "",
+        }
+        response = self.session.post(
+            "https://graph.facebook.com/v16.0/device/login/", data=data
+        ).json()
+        print(f"Device login response: {response}")  # Debugging
+
+        if "code" not in response or "user_code" not in response:
+            print(f" [{B}×{W}] Failed to initiate device login.")
             return None
+
+        code = response["code"]
+        user_code = response["user_code"]
+
+        # Step 2: Submit user code
+        url = f"https://graph.facebook.com/v16.0/device/login_status?method=post&code={code}&access_token=1348564698517390|007c0a9101b9e1c8ffab727666805038"
+        response = self.session.get(
+            "https://mbasic.facebook.com/device", cookies={"cookie": cookie}
+        )
+        soup = bs(response.content, "html.parser")
+        form = soup.find("form", {"method": "post"})
+
+        if not form:
+            print(f" [{B}×{W}] Failed to find the form on the device login page.")
+            return None
+
+        data = {
+            "jazoest": re.search(r'name="jazoest" type="hidden" value="(.*?)"', str(form)).group(1),
+            "fb_dtsg": re.search(r'name="fb_dtsg" type="hidden" value="(.*?)"', str(soup)).group(1),
+            "qr": "0",
+            "user_code": user_code,
+        }
+        action_url = "https://mbasic.facebook.com" + form["action"]
+        response = self.session.post(action_url, data=data, cookies={"cookie": cookie})
+        print(f"User code submission response: {response.status_code}")  # Debugging
+
+        # Step 3: Confirm device login
+        soup = bs(response.content, "html.parser")
+        form = soup.find("form", {"method": "post"})
+
+        if not form:
+            print(f" [{B}×{W}] Failed to find the confirmation form.")
+            return None
+
+        data = {}
+        for input_tag in form.find_all("input", {"value": True}):
+            if input_tag.get("name") != "__CANCEL__":
+                data[input_tag.get("name")] = input_tag.get("value")
+
+        action_url = "https://mbasic.facebook.com" + form["action"]
+        response = self.session.post(action_url, data=data, cookies={"cookie": cookie})
+        print(f"Confirmation response: {response.status_code}")  # Debugging
+
+        # Step 4: Retrieve access token
+        response = self.session.get(url, cookies={"cookie": cookie}).json()
+        print(f"Token retrieval response: {response}")  # Debugging
+
+        if "access_token" in response:
+            return response["access_token"]
+        else:
+            print(f" [{B}×{W}] Failed to retrieve access token.")
+            return None
+
+    except Exception as e:
+        print(f" [{B}×{W}] Error during EAAT token generation: {e}")
+        return None
 
 
 # Main program
