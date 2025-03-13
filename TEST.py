@@ -97,12 +97,10 @@ class Login:
     def save_tokens(self):
     """Save tokens to files."""
     try:
-        # Check if all tokens are available
         if not all([self.token_eaag, self.token_eaab, self.token_eaat]):
             print(f" [{B}×{W}] One or more tokens are missing. Cannot save tokens.")
             return
 
-        # Save tokens to files
         with open("login/cookie.json", "w") as f:
             f.write(self.cookie)
         with open("login/token_eaag.json", "w") as f:
